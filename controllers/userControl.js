@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 export function registerUser(req,res) {
 
@@ -27,7 +28,14 @@ export function loginUser(req,res) {
         }else {
             const isPasswordCorrect = bcrypt.compareSync(data.password,user.password);
             if(isPasswordCorrect) {
-                res.json({message:"User Logged In Successfully"})
+                const token = jwt.sign({
+                    firstname : user.firstname,
+                    lastname : user.lastname,
+                    email : user.email,
+                    role : user.role
+                },"kv-secret-89")
+
+                res.json({message:"User Logged In Successfully",token:token})
             }else {
                 res.status(401).json({message:"Incorrect Password"})
         }
