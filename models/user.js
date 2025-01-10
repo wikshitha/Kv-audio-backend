@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     phone : {
         type : String,
         required : true
+    },
+    profilePic : {
+        type : String,
+        required : true,
+        defult : "https://cdn-icons-png.flaticon.com/512/149/149071.png"
     }
 })
 
