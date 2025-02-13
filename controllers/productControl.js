@@ -19,7 +19,7 @@ export function addProduct(req, res) {
     newProduct.save().then(() => {
         res.json({ message: "Product Added Successfully" })
     }).catch((error) => {
-        res.status(500).json({ message: "Product Addition Failed" })
+        res.status(500).json({ message:error })
     })
 }
 
