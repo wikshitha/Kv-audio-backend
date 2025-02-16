@@ -11,8 +11,8 @@ export function registerUser(req,res) {
 
     data.password = bcrypt.hashSync(data.password,10)
 
-    const newUser = new User(req.body)
-
+    const newUser = new User(data);
+    console.log(newUser);
     newUser.save().then(()=>{
         res.json({message: "User Registered Successfully"})
     }).catch((error)=>{
@@ -40,7 +40,7 @@ export function loginUser(req,res) {
                     phone : user.phone
                 },process.env.JWT_SECRET);
 
-                res.json({message:"User Logged In Successfully",token:token,user:user})
+                res.json({message:"User Logged In Successfully",token: token,user: user})
             }else {
                 res.status(401).json({message:"Incorrect Password"})
         }

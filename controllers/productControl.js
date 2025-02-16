@@ -24,10 +24,7 @@ export function addProduct(req, res) {
 }
 
 export async function getProduct(req, res) {
-    if (req.user == null) {
-        res.status(401).json({ message: "Please login and try again" })
-        return
-    }
+   
     try {
         if (isItAdmin(req)) {
             const products = await Product.find();
@@ -46,10 +43,6 @@ export async function getProduct(req, res) {
 }
 export async function updateProduct(req, res) {
     try {
-        if (req.user == null) {
-            res.status(401).json({ message: "Please login and try again" })
-            return
-        }
         if (isItAdmin(req)) {
             const key = req.params.key;
 
@@ -68,11 +61,6 @@ export async function updateProduct(req, res) {
 }
 
 export async function deleteProduct(req, res) {
-
-    if (req.user == null) {
-        res.status(401).json({ message: "Please login and try again" })
-        return
-    }
     try {
         if (isItAdmin(req)) {
             const key = req.params.key;
