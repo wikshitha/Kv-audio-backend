@@ -1,5 +1,6 @@
 import Order from "../models/order.js"
 import Product from "../models/product.js"
+import { isItAdmin, isItCustomer } from "./userControl.js"
 
 export async function createOrder(req,res) {
     const data = req.body
@@ -127,5 +128,54 @@ export async function getQuote(req,res) {
         })
     }catch (error) {
         res.status(500).json({message:"Failed to Create Order"})
+    }
+}
+
+export async function getOrders(req,res) {
+    if(isItCustomer(req)) {
+        try{
+            const orders = await Order.find({email : req.user.email});
+            res.json(orders)
+        }catch (error) {
+            res.status(500).json({message:"Failed to get orders"})
+        }
+    }else if(isItAdmin(req)) {
+        try{
+            const orders = await Order.find();
+            res.json(orders)
+        }catch (error) {
+            res.status(500).json({message:"Failed to get orders"})
+        }
+    }else {
+        res.status(403).json({message:"You are not authorized"})
+    }
+}
+
+export async function approveOrRejectOrder(req,res) {
+    const orderId = req.params.id
+    const status = req.body.status
+
+    if(isItAdmin(req)) {
+        try{
+            const order = await Order.findOne({orderId : orderId});
+            if(order == null) {
+                res.status(404).json({message:"Order not found"})
+                return
+            }
+            await Order.updateOne(
+                {
+                    orderId : orderId
+                },
+                {
+                    status : status
+                }
+            )
+            res.json({message:"Order updated successfully"})
+        }catch (error) {
+            res.status(500).json({message:"Failed to update order"})
+        }
+        
+    }else {
+        res.status(403).json({message:"You are not authorized"})
     }
 }
