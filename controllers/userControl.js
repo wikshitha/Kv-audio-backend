@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import axios from "axios";
 
 dotenv.config();
 
@@ -126,4 +127,63 @@ export function getUser(req,res){
     }else{
       res.status(403).json({error: "Unauthorized"});
     }
-  }
+}
+
+export async function loginWithGoogle(req,res) {
+    const accessToken = req.body.accessToken;
+    console.log(accessToken)
+
+    try {
+    const response = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo",{
+        headers : {
+            Authorization : `Bearer ${accessToken}`
+        }
+    })
+
+    console.log(response.data)
+    const user = await User.findOne({
+        email : response.data.email
+    });
+
+    if(user != null) {
+        const token = jwt.sign({
+            firstname : user.firstName,
+            lastname : user.lastName,
+            email : user.email,
+            role : user.role,
+            profilePic : user.profilePic,
+            phone : user.phone
+        },process.env.JWT_SECRET);
+
+        res.json({message:"User Logged In Successfully",token: token,user: user})
+    } else {
+        const newUser = new User({
+            email : response.data.email,
+            password : "123",
+            firstName : response.data.given_name,
+            lastName : response.data.family_name,
+            profilePic : response.data.picture,
+            address : "Not Given",
+            phone : "Not Given",
+            emailVerified : true
+        })
+        const savedUser = await newUser.save();
+
+        const token = jwt.sign({
+            firstname : savedUser.firstName,
+            lastname : savedUser.lastName,
+            email : savedUser.email,
+            role : savedUser.role,
+            profilePic : savedUser.profilePic,
+            phone : savedUser.phone
+        },process.env.JWT_SECRET);
+
+        res.json({message:"User Logged In Successfully",token: token,user: savedUser})
+    }
+} catch (error) {
+    console.log(error)
+    res.status(500).json({message:"Invalid Access Token"})
+    return;
+}
+}
+
