@@ -43,7 +43,7 @@ export function loginUser(req,res) {
         if(user == null) {
             res.status(404).json({message:"User Not Found"})
         }else {
-            if(user.isBlocked){
+            if(user.isBloked){
                 res.status(403).json({error: "Your account is blocked please contact the admin"});
                 return;
               }
@@ -115,14 +115,14 @@ export async function blockOrUnblockUser(req,res) {
                 return;
             }
 
-            const isBlocked = !user.isBlocked;
+            const isBloked = !user.isBloked;
 
                 await User.updateOne(
                     {
                         email : email
                     },
                     {
-                        isBlocked : isBlocked
+                        isBloked : isBloked
                     }
                 )
                 res.json({message:"User Blocked/Unblocked Successfully"})

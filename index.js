@@ -57,8 +57,3 @@ app.listen(3000,()=>{
     
 })
 
-// "email": "kumaradoe@example.com", -customer
-// "password": "securePassword123",
-
-// "email": "kumaradoe1@example.com", -admin
-//     "password": "123",
