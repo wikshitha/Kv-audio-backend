@@ -2,13 +2,14 @@
 import Review from "../models/reviews.js";
 
 export function addReview(req, res) {
+    console.log(req.user)
     if (req.user == null) {
         res.status(401).json({ message: "Please login and try again" })
         return
     }
     const data = req.body;
 
-    data.name = req.user.firstName + " " + req.user.lastName
+    data.name = req.user.firstname + " " + req.user.lastname
     data.profilepic = req.user.profilepic
     data.email = req.user.email
 
