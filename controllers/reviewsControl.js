@@ -47,7 +47,7 @@ export function deleteReview(req, res) {
         return
     }
 
-    if (req.User.role == "Admin") {
+    if (req.user.role == "Admin") {
         Review.deleteOne({ email: email }).then(() => {
             res.json({ message: "Review deleted susses" })
         }).catch(() => {
