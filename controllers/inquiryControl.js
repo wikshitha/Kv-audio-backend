@@ -3,6 +3,10 @@ import Inquiry from "../models/inquiry.js";
 import { isItAdmin } from "./userControl.js";
 
 export async function addInquiry(req,res) {
+    if(req.user == null) {
+        res.status(401).json({ message: "Please login and try again" })
+        return
+    }
     try {
         if(isItCustomer(req)) {
             const data = req.body;
@@ -26,6 +30,8 @@ export async function addInquiry(req,res) {
 
             res.json({ message: "Inquiry Added Successfully" ,id: response.id})
 
+        }else {
+            res.status(403).json({ message: "You are not authorized" })
         }
     }catch (error) {
         res.status(500).json({ message: "Inquiry Addition Failed" })
@@ -33,6 +39,10 @@ export async function addInquiry(req,res) {
 }
 
 export async function getInquiries(req,res) {
+    if(req.user == null) {
+        res.status(401).json({ message: "Please login and try again" })
+        return
+    }
     try {
         if(isItCustomer(req)) {
             const inquiries = await Inquiry.find({email: req.user.email});
