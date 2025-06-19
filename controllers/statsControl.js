@@ -1,3 +1,4 @@
+import Gallery from "../models/gallery.js";
 import Order from "../models/order.js";
 import Product from "../models/product.js";
 import User from "../models/user.js";
@@ -6,10 +7,12 @@ import { isItAdmin } from "./userControl.js";
 export async function statsCount(req,res) {
    if (isItAdmin(req)) {
     try {
-        const [totalOrders, totalUsers, totalItems] = await Promise.all([
+        const [totalOrders, totalUsers, totalItems, totalGalleries] = await Promise.all([
             Order.countDocuments(), // Count all orders
             User.countDocuments(),  // Count all users
             Product.countDocuments(),  // Count all items
+            Gallery.countDocuments() // Count all gallery items
+
           ]);
 
         //   console.log(totalItems,totalOrders,totalUsers);
@@ -17,7 +20,8 @@ export async function statsCount(req,res) {
         res.json({
             totalOrders,
             totalUsers,
-            totalItems
+            totalItems,
+            totalGalleries
         })
          
     } catch (error) {
